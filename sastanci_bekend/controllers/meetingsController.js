@@ -33,7 +33,7 @@ exports.addmeeting = async (req, res) => {
             return res.status(400).send("Meeting in that hour already exists");
         }
 
-        const reservation = await Meeting.create({
+        const meeting = await Meeting.create({
             name: name,
             description: description,
             start_meeting: start_meeting,
@@ -43,7 +43,7 @@ exports.addmeeting = async (req, res) => {
             res.status(500).send(error);
         });
 
-        return res.status(201).json(reservation);
+        return res.status(201).json(meeting);
 
     } catch (err) {
         console.log(err);
@@ -51,16 +51,14 @@ exports.addmeeting = async (req, res) => {
     }
 }
 
-// DELETE request on url/reservations/removeMeeting/:id
-// returns deleted object
 exports.removemeeting = async (req, res) => {
     Meeting.findByIdAndDelete(req.params.id).then(
-        (reservation) => {
-            if (!reservation) {
+        (meeting) => {
+            if (!meeting) {
                 return res.status(404).send();
             }
 
-            res.send(reservation);
+            res.send(meeting);
         })
         .catch((error) => {
             res.status(500).send(error);
@@ -68,13 +66,11 @@ exports.removemeeting = async (req, res) => {
 }
 
 
-//GET requst to url/reservations/getByMeetingsId/:id
 exports.getByMeetingId = async (req, res) => {
     const record = await Meeting.findOne({ _id: req.params.id });
     return res.status(200).json(record);
 }
 
-//GET request to url/reservations/getByUserId/:username
 exports.getByUsername = async (req, res) => {
     const Username = req.params.username;
     console.log(Username);
@@ -84,7 +80,6 @@ exports.getByUsername = async (req, res) => {
     return res.status(200).json(records);
 }
 
-//GET request to url/reservations/
 exports.getAll = async (req, res) => {
     const records = await Meeting.find({});
     return res.status(200).json(records);
