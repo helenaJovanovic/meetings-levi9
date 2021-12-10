@@ -1,39 +1,44 @@
 const express = require("express");
-const Reservation = require('../model/meeting');
+const Meeting = require('../model/meeting');
 const User = require('../model/user');
 
 
 exports.addmeeting = async (req, res) => {
     try {
-        let { start_meeting, end_meeting, user_id } = req.body;
+        let { name, description, start_meeting, end_meeting, user_ids } = req.body;
 
-        if (!(start_meeting && end_meeting && user_id)) {
+        if (!(name && description && start_meeting && end_meeting && user_ids)) {
             return res.status(400).send("All fields are required");
         }
-      
-        try{
+
+        try {
             start_meeting = new Date(start_meeting);
             end_meeting = new Date(end_meeting);
         }
-        catch(err){
+        catch (err) {
             return res.status(400).send("Invalid date format");
-       }
+        }
 
-        const userIdExists = await User.findOne({ _id: user_id });
-        const meetingExists = await Reservation.findOne({ start_meeting: start_meeting });
+        user_ids.forEach(id => {
+            const userIdExists = User.findOne({ _id: id });
+            
+            if (!userIdExists) {
+                return res.status(404).send("User id from request doesn't exist");
+            }
+        });
+
+        const meetingExists = await Meeting.findOne({ start_meeting: start_meeting });
 
         if (meetingExists) {
             return res.status(400).send("Meeting in that hour already exists");
         }
 
-        if (!userIdExists) {
-            return res.status(404).send("User id from request doesn't exist");
-        }
-
-        const reservation = await Reservation.create({
+        const reservation = await Meeting.create({
+            name: name,
+            description: description,
             start_meeting: start_meeting,
             end_meeting: end_meeting,
-            user_id: user_id
+            user_ids: user_ids
         }).catch((error) => {
             res.status(500).send(error);
         });
@@ -42,13 +47,14 @@ exports.addmeeting = async (req, res) => {
 
     } catch (err) {
         console.log(err);
+        return res.status(500).send(err);
     }
 }
 
-// DELETE request on url/reservations/removeReservation/:id
+// DELETE request on url/reservations/removeMeeting/:id
 // returns deleted object
 exports.removemeeting = async (req, res) => {
-    Reservation.findByIdAndDelete(req.params.id).then(
+    Meeting.findByIdAndDelete(req.params.id).then(
         (reservation) => {
             if (!reservation) {
                 return res.status(404).send();
@@ -62,10 +68,10 @@ exports.removemeeting = async (req, res) => {
 }
 
 
-//GET requst to url/reservations/getByReservationsId/:id
-exports.getByReservationId = async(req, res) => {
-    const record = await Reservation.findOne({_id: req.params.id});
-    res.status(200).json(record);
+//GET requst to url/reservations/getByMeetingsId/:id
+exports.getByMeetingId = async (req, res) => {
+    const record = await Meeting.findOne({ _id: req.params.id });
+    return res.status(200).json(record);
 }
 
 //GET request to url/reservations/getByUserId/:username
@@ -74,12 +80,12 @@ exports.getByUsername = async (req, res) => {
     console.log(Username);
     const user = await User.findOne({ Username: Username });
     console.log(user);
-    const records = await Reservation.find({user_id: user._id});
-    res.status(200).json(records);
+    const records = await Meeting.find({ user_id: user._id });
+    return res.status(200).json(records);
 }
 
 //GET request to url/reservations/
 exports.getAll = async (req, res) => {
-    const records = await Reservation.find({});
-    res.status(200).json(records);
+    const records = await Meeting.find({});
+    return res.status(200).json(records);
 }

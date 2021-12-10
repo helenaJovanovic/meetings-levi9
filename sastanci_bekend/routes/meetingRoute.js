@@ -6,7 +6,7 @@ var meeting_c = require('../controllers/meetingsController');
 
 router.get('/getAll', meeting_c.getAll);
 
-router.get('/getByReservationId/:id', meeting_c.getByReservationId);
+router.get('/getByMeetingId/:id', meeting_c.getByMeetingId);
 
 router.get('/getByUsername/:username', meeting_c.getByUsername);
 

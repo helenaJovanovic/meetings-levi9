@@ -2,6 +2,14 @@
 <div class="card" style="width: 180px; height: 180px;">
   <div class="card-body">
     <h5 class="card-title">{{broj}}</h5>
-    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+    <p *ngFor="let sastanak of sastanci" class="card-text">
+
+      <b> {{sastanak.name}} </b>
+      <br>
+      {{sastanak.description}}
+      <br>
+      {{uSate(sastanak.start_meeting, sastanak.end_meeting)}}
+    </p>
+    
   </div>
 </div>

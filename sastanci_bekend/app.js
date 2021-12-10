@@ -27,7 +27,7 @@ app.use("*", (req, res) => {
         message: "Page not found",
         error: {
             statusCode: 404,
-            message: "Doesn't exist"
+            message: "Doesn't existt"
         }
     });
 });
