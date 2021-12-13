@@ -1,8 +1,7 @@
-
-<div class="card" style="width: 180px; height: 180px;">
+<div class="card" style="width: 180px; height: 180px;" data-bs-toggle="modal" [attr.data-bs-target]=calcAttrId()>
   <div class="card-body">
     <h5 class="card-title">{{broj}}</h5>
-    <p *ngFor="let sastanak of sastanci" class="card-text">
+    <p *ngFor="let sastanak of lokalni_sastanci;" class="card-text">
 
       <b> {{sastanak.name}} </b>
       <br>
@@ -10,6 +9,67 @@
       <br>
       {{uSate(sastanak.start_meeting, sastanak.end_meeting)}}
     </p>
-    
+
+
+
+  </div>
+</div>
+
+<div class="modal fade" id={{calcAttr()}} tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-primary" id="exampleModalLabel">Make a new plan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <form [formGroup]="meetingForm" (ngSubmit)="onSubmit()">
+
+          <div class="mb-3">
+            <label for="inputName" class="form-label">Name: </label>
+            <input type="text" class="form-control" id="inputName" formControlName="Name">
+          </div>
+
+          <div class="mb-3">
+            <label for="inputDescription" class="form-label">Description: </label>
+            <input type="text" class="form-control" id="inputDescription" formControlName="Description">
+          </div>
+
+          <div class="mb-3">
+            <label for="start" class="form-label">Start: </label>
+            <br>
+            <input type="time" id="start" formControlName="Start">
+          </div>
+
+          <div class="mb-3">
+            <label for="end" class="form-label">End: </label>
+            <br>
+            <input type="time" id="end" formControlName="End">
+          </div>
+
+          <div class="mb-3">
+            <select class="select" style="width:150px;" multiple formControlName="Usernames">
+
+              <option *ngFor="let user of users" value={{user._id}}>{{user.Username}}</option>
+              
+            </select>
+
+            <br>
+            <label class="form-label select-label">Press and hold CTRL to select multiple.</label>
+          </div>
+
+          <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" >Add</button>
+        </form>
+
+      </div>
+
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button>
+      </div>
+
+    </div>
   </div>
 </div>
