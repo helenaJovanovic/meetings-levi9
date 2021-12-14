@@ -8,6 +8,8 @@ router.get('/getAll', meeting_c.getAll);
 
 router.get('/getByMeetingId/:id', meeting_c.getByMeetingId);
 
+router.get('/getMeetingByDay/:day', meeting_c.getMeetingByDay);
+
 router.get('/getByUsername/:username', meeting_c.getByUsername);
 
 router.post('/addMeeting', meeting_c.addmeeting);

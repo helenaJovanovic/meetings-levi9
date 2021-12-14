@@ -8,7 +8,7 @@ router.get('/:user_id', async(req, res) => {
 
     const user = await User.findOne({ _id: req.params.user_id });
 
-    res.status(200).json(user.Username);
+    res.status(200).json(user);
 });
 
 router.get('/', async(req, res) => {

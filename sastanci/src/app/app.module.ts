@@ -8,13 +8,15 @@ import { DayComponent } from './home/day/day.component';
 import { EmptyDayComponent } from './home/empty-day/empty-day.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { SastanciComponent } from './sastanci/sastanci.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     DayComponent,
-    EmptyDayComponent
+    EmptyDayComponent,
+    SastanciComponent
   ],
   imports: [
     BrowserModule,

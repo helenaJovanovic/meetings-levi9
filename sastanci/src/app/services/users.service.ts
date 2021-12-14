@@ -12,17 +12,21 @@ export class UsersService {
 
   korisnici: User[] | undefined;
 
-  constructor(private http: HttpClient) { 
+  constructor(private http: HttpClient) {
     this.path = "http://localhost:4000/users/";
     this.korisnici = undefined;
   }
 
-  getUsers() : Observable<User[]>{
+  getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.path);
   }
 
-  getFetchedUsers(): User[]{
-    if(this.korisnici === undefined){
+  getUser(id: string): Observable<User> {
+    return this.http.get<User>(`http://localhost:4000/users/${id}`);
+  }
+
+  getFetchedUsers(): User[] {
+    if (this.korisnici === undefined) {
       return [];
     }
     return this.korisnici;

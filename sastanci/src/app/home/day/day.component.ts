@@ -1,9 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, Input, HostListener, ChangeDetectorRef, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
+import { interval, Subscription } from 'rxjs';
 import { meeting } from 'src/app/models/meeting';
 import { User } from 'src/app/models/user';
+import { MeetingsService } from 'src/app/services/meetings.service';
 import { UsersService } from 'src/app/services/users.service';
 
 
@@ -15,8 +17,6 @@ import { UsersService } from 'src/app/services/users.service';
 export class DayComponent implements OnInit {
 
   @Input() broj = 0;
-
-  @Input() sastanci: meeting[] = [];
 
   lokalni_sastanci: meeting[] = [];
 
@@ -32,19 +32,34 @@ export class DayComponent implements OnInit {
     Usernames: ['']
   })
 
-  constructor(private userService: UsersService, private fb: FormBuilder, private http: HttpClient, private changeDetection: ChangeDetectorRef) {
+  constructor(private userService: UsersService, private meetingsService: MeetingsService,
+    private fb: FormBuilder, private http: HttpClient, 
+    private changeDetection: ChangeDetectorRef, private router: Router) {
+
     this.users = [];
     this.subscriptions = [];
 
-  }
+    interval(1000).subscribe((x) => {this.ngOnInit()});
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.sastanci.length != 0) {
-      this.lokalni_sastanci = this.sastanci;
-    }
   }
 
   ngOnInit(): void {
+    //getByDay
+   
+    this.subscriptions.push(this.meetingsService.getByDay(this.broj).subscribe(
+      (res) => {
+        this.lokalni_sastanci = res;
+        this.getUserAcountsForMeetings();
+
+      },
+      (error) => {
+        window.alert(`Error getting data for a day component: ` + error.error);
+      }
+    ));
+
+  }
+
+  getUserAcountsForMeetings(){
     if (this.userService.korisnici === undefined) {
       this.userService.getUsers().subscribe((res) => {
         if (res !== undefined) {
@@ -56,17 +71,16 @@ export class DayComponent implements OnInit {
   }
 
 
-  calcAttrId() {
-    return `#idModala${this.broj}`;
-  }
+  otvoriSastanke($event, sastanak) {
+    $event.preventDefault();
 
-  calcAttr() {
-    return `idModala${this.broj}`;
-  }
-
-  @HostListener("dblclick") onClick() {
-    console.log("User Click using Host Listener")
-  }
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree( ['/sastanci'], 
+      {queryParams: {id: sastanak}})
+    );
+  
+    window.open(url, '_blank');
+}
 
   uSate(begin: Date | undefined, end: Date | undefined) {
     if (begin === undefined || end === undefined) {
@@ -88,15 +102,15 @@ export class DayComponent implements OnInit {
 
 
 
-    this.subscriptions.push(this.http.post<meeting>("http://localhost:4000/meetings/addMeeting", meeting_var).subscribe(
+    this.subscriptions.push(this.meetingsService.addMeeting(meeting_var).subscribe(
       (res) => {
 
         this.lokalni_sastanci.push(res);
-        //force reload of component
-        this.lokalni_sastanci = this.lokalni_sastanci;
-       
-        this.changeDetection.detectChanges();
-        this.ngOnInit(); 
+        //this.changeDetection.detectChanges();
+   
+      },
+      (err) => {
+        window.alert(err.error);         
       }
     ));
   }
@@ -113,6 +127,14 @@ export class DayComponent implements OnInit {
     date.setSeconds(0);
     date.setMilliseconds(0);
     return date;
+  }
+
+  calcAttrId() {
+    return `#idModala${this.broj}`;
+  }
+
+  calcAttr() {
+    return `idModala${this.broj}`;
   }
 
   ngOnDestroy() {

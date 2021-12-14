@@ -71,6 +71,21 @@ exports.getByMeetingId = async (req, res) => {
     return res.status(200).json(record);
 }
 
+exports.getMeetingByDay = async (req, res) => {
+    var day = req.params.day;
+    const allMeetings = await Meeting.find({});
+
+    var records = [];
+
+    allMeetings.forEach((el) => {
+        if(el.start_meeting.getDate() == day){
+            records.push(el);
+        }
+    });
+    
+    return res.status(200).json(records);
+}
+
 exports.getByUsername = async (req, res) => {
     const Username = req.params.username;
     console.log(Username);

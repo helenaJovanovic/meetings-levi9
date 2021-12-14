@@ -1,11 +1,9 @@
 <div class="card" style="width: 180px; height: 180px;" data-bs-toggle="modal" [attr.data-bs-target]=calcAttrId()>
   <div class="card-body">
     <h5 class="card-title">{{broj}}</h5>
-    <p *ngFor="let sastanak of lokalni_sastanci;" class="card-text">
+    <p *ngFor="let sastanak of lokalni_sastanci;" class="primary" (contextmenu)="otvoriSastanke($event, sastanak._id)">
 
       <b> {{sastanak.name}} </b>
-      <br>
-      {{sastanak.description}}
       <br>
       {{uSate(sastanak.start_meeting, sastanak.end_meeting)}}
     </p>
@@ -15,11 +13,11 @@
   </div>
 </div>
 
-<div class="modal fade" id={{calcAttr()}} tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id={{calcAttr()}} tabindex="-1" aria-labelledby="modalAdd" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title text-primary" id="exampleModalLabel">Make a new plan</h5>
+        <h5 class="modal-title text-primary" id="modalAdd">Make a new plan</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
